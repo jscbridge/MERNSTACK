@@ -1,0 +1,89 @@
+body {
+  background-color: rgb(56, 56, 142);
+}
+
+#App {
+  display       : flex;
+  align-items   : center;
+  flex-direction: column;
+}
+
+#users {
+  display        : flex;
+  justify-content: center;
+
+
+}
+
+#btn-users {
+  padding         : 3vh;
+  border-radius   : 10px;
+  font-size       : 4vh;
+  background-color: rgb(201, 216, 236);
+  color           : rgb(56, 56, 142);
+}
+
+#input-pass {
+  margin-top: 3%;
+}
+
+#input-pass input {
+  width : 50vh;
+  height: 5vh;
+}
+
+#input-pass button {
+  color           : white;
+  width           : 51vh;
+  height          : 5vh;
+  background-color: rgb(17, 38, 65);
+}
+
+button:hover {
+  color           : white;
+  background-color: rgb(45, 56, 72);
+}
+
+
+#tareas {
+  width           : 50vh;
+  margin-top      : 5vh;
+  text-align      : center;
+  display         : flex;
+  flex-direction  : column;
+  align-items     : center;
+  background-color: rgb(84, 119, 165);
+  border          : 1px solid rgb(201, 216, 236);
+  padding-bottom  : 5vh;
+}
+
+.tarea {
+  background-color: rgb(196, 214, 237);
+}
+
+.updateTarea {
+  display: none;
+}
+
+#insertarTarea {
+  background-color: rgb(45, 56, 72);
+  border-radius   : 5px;
+  color           : white;
+  padding         : 2vh;
+}
+
+#registrar {
+  align-self    : flex-start;
+  display       : flex;
+  flex-direction: column;
+}
+
+#registrar button {
+  color           : white;
+  background-color: rgb(30, 41, 58);
+}
+
+#registrar button:hover {
+  color           : rgb(30, 41, 58);
+  background-color: white;
+}
