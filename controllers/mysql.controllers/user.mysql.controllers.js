@@ -9,12 +9,12 @@ const user = {
   insertUser: async (req, res) => {
     const { userName, email, pass } = req.body;
     const existUser = await usersModel.findAll({ where: { email } });
-    console.log(existUser);
-    if (existUser == []) {
-      res.json("existe");
-    } else {
+    console.log(existUser == "");
+    if (existUser == "") {
       const insert = await usersModel.create({ userName, email, pass });
       res.json(insert);
+    } else {
+      res.json("existe");
     }
   },
   deleteUser: async (req, res) => {

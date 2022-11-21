@@ -10,11 +10,11 @@ const App = () => {
   // Detecta el id del user al clickear, recoge su id
   const [userClick, setUserClick] = useState("");
 
-  // Existe email [true].  No existe [false]
+  // Existe email/fomatinvalid [true/"Existe email"].  No existe [false/"Campos inválidos"]
   const [existe, setExiste] = useState(false);
   const [message, setMessage] = useState(false);
 
-//Recoge el valor Select (eamil) para eliminar user
+  //Recoge el valor Select (eamil) para eliminar user
   const [select, setSelect] = useState("");
 
   // Valores recogidos de mongo
@@ -28,15 +28,19 @@ const App = () => {
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
 
+  // Carga la pg con los datos de los users [infoUsers]
   useEffect(() => {
     fetch("/getusers")
       .then((res) => res.json(res))
       .then((res) => {
         setInfoUsers(res);
+        console.log(res)
       });
   }, []);
 
+  // Cuando se loguea al poner el pass
   const login = () => {
+    console.log(userClick);
     if (pass == infoUsers[userClick - 1].pass) {
       let idUsuario = userClick;
       let info = {
@@ -51,7 +55,6 @@ const App = () => {
       fetch("/getareas", info)
         .then((res) => res.json(res))
         .then((res) => {
-          console.log(res);
           setTareas(res);
           setViewUsers(false);
         });
@@ -78,7 +81,6 @@ const App = () => {
   };
 
   const insertar = () => {
-    console.log("pasa");
     let idUsuario = userClick;
 
     let info = {
@@ -126,25 +128,42 @@ const App = () => {
   };
 
   const registrar = () => {
-    let info = {
-      method: "POST",
-      body: JSON.stringify({ userName: name, email, pass }),
-      mode: "cors",
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-type": "application/json",
-      },
-    };
-    fetch("/insertuser", info)
-      .then((res) => res.json(res))
-      .then((res) => {
-        if (res == "existe") {
-          setExiste(true);
-        } else {
-          setExiste(false);
-          window.location.reload(true);
-        }
-      });
+    let regexNombre = new RegExp(
+      "[a-zA-ZÀ-ÖØ-öø-ÿ]+.?(( |-)[a-zA-ZÀ-ÖØ-öø-ÿ]+.?)*"
+    );
+    let okUserName = regexNombre.test(name);
+
+    let regexEmail = new RegExp(
+      "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-ñ]+@[a-zA-Z0-9-]+(?:.[a-zA-Z0-9-]+)*$"
+    );
+    let okEmail = regexEmail.test(email);
+
+    let regexPass = new RegExp("^([0-9])*$");
+    let okPass = regexPass.test(pass);
+
+    if (okEmail && okPass && okUserName) {
+      let info = {
+        method: "POST",
+        body: JSON.stringify({ userName: name, email, pass }),
+        mode: "cors",
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Content-type": "application/json",
+        },
+      };
+      fetch("/insertuser", info)
+        .then((res) => res.json(res))
+        .then((res) => {
+          if (res == "existe") {
+            setExiste("Ya existe ese correo");
+          } else {
+            setExiste(false);
+            window.location.reload(true);
+          }
+        });
+    } else {
+      setExiste("Campos invalidos");
+    }
   };
   const borrarUser = () => {
     console.log(select);
@@ -193,7 +212,7 @@ const App = () => {
         >
           Registrar
         </button>
-        {existe ? <p>Ya existe ese correo</p> : ""}
+        {existe ? <p>{existe}</p> : ""}
         <div>
           <select name="select" onChange={(e) => setSelect(e.target.value)}>
             {infoUsers
@@ -212,6 +231,8 @@ const App = () => {
         </div>
       </div>
 
+      {/*PINTA LOS USERS Y PASS */}
+
       {viewUsers ? (
         <div>
           <div id="users">
@@ -219,10 +240,12 @@ const App = () => {
               ? infoUsers.map((user, i) => {
                   return (
                     <button
-                      id="btn-users"
+                      className="btn-users"
                       onClick={() => {
-                        setUserClick(user.idUser);
+                        setUserClick(i+1);
+                        console.log(i)
                         setMessage(false);
+                    
                       }}
                       key={i}
                     >
@@ -236,7 +259,7 @@ const App = () => {
             <div id="input-pass">
               <input
                 type="password"
-                placeholder={`Pon tu Pass ${infoUsers[userClick - 1].userName}`}
+                placeholder={`Pon tu Pass ${infoUsers[userClick-1].userName}`}
                 onChange={(e) => setPass(e.target.value)}
               />
               <br></br>
