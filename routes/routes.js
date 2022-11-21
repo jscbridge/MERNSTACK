@@ -9,8 +9,10 @@ router.delete("/deleteuser", user.deleteUser);
 
 // TAREA Mongoose
 router.post("/getareas", tarea.getTareas);
-router.delete("/deletetareas", tarea.deleteTareas);
-router.post("/inserttareas", tarea.insertTareas);
+router.delete("/deletetarea", tarea.deleteTarea);
+router.delete("/deletealltareas", tarea.deleteAllTareas);
+
+router.post("/inserttarea", tarea.insertTarea);
 router.put("/updatetareas", tarea.updateTareas);
 
 

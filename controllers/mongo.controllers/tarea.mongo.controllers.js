@@ -5,17 +5,25 @@ const Tareas = {
     const infoTareas = await tareaModel.find({ idUsuario: req.body.idUsuario });
     res.json(infoTareas);
   },
-  insertTareas: async (req, res) => {
+  insertTarea: async (req, res) => {
     console.log(req.body);
     const { idUsuario, nombreTarea } = req.body;
     let info = { idUsuario, nombreTarea };
     const insertTareas = await tareaModel.create(info);
     res.json(insertTareas);
   },
-  deleteTareas: async (req, res) => {
+  deleteTarea: async (req, res) => {
     const { nombreTarea } = req.body;
     const deleteTarea = await tareaModel.deleteOne({ nombreTarea });
     res.json(deleteTarea);
+  },
+  deleteAllTareas: async (req, res) => {
+    const { idUsuario } = req.body;
+    console.log(idUsuario);
+    const deleteAllTareas = await tareaModel.delete({
+      where: { idUsuario },
+    });
+    res.json(deleteAllTareas);
   },
   updateTareas: async (req, res) => {
     const { id, nombreTarea } = req.body;

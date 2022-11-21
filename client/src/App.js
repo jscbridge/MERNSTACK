@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
+import Register from "./components/Register";
+
 const App = () => {
   //Valores de los usuarios del mysql
   const [infoUsers, setInfoUsers] = useState("");
@@ -10,12 +12,8 @@ const App = () => {
   // Detecta el id del user al clickear, recoge su id
   const [userClick, setUserClick] = useState("");
 
-  // Existe email/fomatinvalid [true/"Existe email"].  No existe [false/"Campos inválidos"]
-  const [existe, setExiste] = useState(false);
+  // Incorrecto pass
   const [message, setMessage] = useState(false);
-
-  //Recoge el valor Select (eamil) para eliminar user
-  const [select, setSelect] = useState("");
 
   // Valores recogidos de mongo
   const [tareas, setTareas] = useState("");
@@ -23,9 +21,7 @@ const App = () => {
   // Multiuso para campo insertar/updatear
   const [nombreTarea, setNombreTarea] = useState("");
 
-  // Estados de los valores del registro [nombre, email, pass]
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  // Estado del los valor del login [pass]
   const [pass, setPass] = useState("");
 
   // Carga la pg con los datos de los users [infoUsers]
@@ -34,202 +30,67 @@ const App = () => {
       .then((res) => res.json(res))
       .then((res) => {
         setInfoUsers(res);
-        console.log(res)
+        console.log(res);
       });
   }, []);
 
-  // Cuando se loguea al poner el pass
+  //! Cuando se loguea al poner el pass.
   const login = () => {
-    console.log(userClick);
     if (pass == infoUsers[userClick - 1].pass) {
-      let idUsuario = userClick;
-      let info = {
-        method: "POST",
-        body: JSON.stringify({ idUsuario }),
-        mode: "cors",
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-type": "application/json",
-        },
-      };
-      fetch("/getareas", info)
-        .then((res) => res.json(res))
-        .then((res) => {
-          setTareas(res);
-          setViewUsers(false);
-        });
+      let idUsuario = infoUsers[userClick - 1].idUser;
+      metaInfo("POST", { idUsuario }, "/getareas");
     } else {
-      setMessage(true);
+      setMessage("Incorrecto");
     }
   };
 
-  const borrar = (nombreTarea) => {
-    let info = {
-      method: "DELETE",
-      body: JSON.stringify({ nombreTarea }),
-      mode: "cors",
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-type": "application/json",
-      },
-    };
-    fetch("/deletetareas", info)
-      .then((res) => res.json(res))
-      .then((res) => {
-        login();
-      });
-  };
-
   const insertar = () => {
-    let idUsuario = userClick;
+    let idUsuario = infoUsers[userClick - 1].idUser;
+    metaInfo("POST", { idUsuario, nombreTarea }, "/inserttarea");
+  };
+  const actualizar = (id) => {
+    metaInfo("PUT", { id, nombreTarea }, "/updatetareas");
+  };
+  const borrar = (nombreTarea) => {
+    metaInfo("DELETE", { nombreTarea }, "/deletetarea");
+    // metaInfo("DELETE", { idUsuario }, "/deletealltareas");
+  };
 
-    let info = {
-      method: "POST",
-      body: JSON.stringify({ idUsuario, nombreTarea }),
+  const metaInfo = (method, info, endpoint) => {
+    let datos = {
+      method: method,
+      body: JSON.stringify(info),
       mode: "cors",
       headers: {
         "Access-Control-Allow-Origin": "*",
         "Content-type": "application/json",
       },
     };
-    fetch("/inserttareas", info)
+
+    fetch(endpoint, datos)
       .then((res) => res.json(res))
       .then((res) => {
-        login();
+        if (endpoint == "/getareas") {
+          setTareas(res);
+          setViewUsers(false);
+        } else {
+          login();
+        }
       });
   };
+
   const cambiar = (posicionTarea) => {
     let tasks = document.getElementsByClassName("updateTarea");
     for (let i = 0; i < tasks.length; i++) {
       document.getElementsByClassName("updateTarea")[i].style.display = "none";
     }
-
-    let task = (document.getElementsByClassName("updateTarea")[
-      posicionTarea
-    ].style.display = "flex");
+    let task = (document.getElementsByClassName("updateTarea")[posicionTarea].style.display =
+      "flex");
   };
 
-  const actualizar = (id) => {
-    console.log(id);
-    let info = {
-      method: "PUT",
-      body: JSON.stringify({ id, nombreTarea }),
-      mode: "cors",
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-type": "application/json",
-      },
-    };
-    fetch("/updatetareas", info)
-      .then((res) => res.json(res))
-      .then((res) => {
-        login();
-      });
-  };
-
-  const registrar = () => {
-    let regexNombre = new RegExp(
-      "[a-zA-ZÀ-ÖØ-öø-ÿ]+.?(( |-)[a-zA-ZÀ-ÖØ-öø-ÿ]+.?)*"
-    );
-    let okUserName = regexNombre.test(name);
-
-    let regexEmail = new RegExp(
-      "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-ñ]+@[a-zA-Z0-9-]+(?:.[a-zA-Z0-9-]+)*$"
-    );
-    let okEmail = regexEmail.test(email);
-
-    let regexPass = new RegExp("^([0-9])*$");
-    let okPass = regexPass.test(pass);
-
-    if (okEmail && okPass && okUserName) {
-      let info = {
-        method: "POST",
-        body: JSON.stringify({ userName: name, email, pass }),
-        mode: "cors",
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-type": "application/json",
-        },
-      };
-      fetch("/insertuser", info)
-        .then((res) => res.json(res))
-        .then((res) => {
-          if (res == "existe") {
-            setExiste("Ya existe ese correo");
-          } else {
-            setExiste(false);
-            window.location.reload(true);
-          }
-        });
-    } else {
-      setExiste("Campos invalidos");
-    }
-  };
-  const borrarUser = () => {
-    console.log(select);
-    let info = {
-      method: "DELETE",
-      body: JSON.stringify({ email: select }),
-      mode: "cors",
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-type": "application/json",
-      },
-    };
-    fetch("/deleteuser", info)
-      .then((res) => res.json(res))
-      .then((res) => window.location.reload(true));
-  };
   return (
     <div id="App">
-      <div id="registrar">
-        <input
-          onChange={(e) => {
-            setName(e.target.value);
-          }}
-          type="text"
-          placeholder="UserName"
-        />
-        <input
-          onChange={(e) => {
-            setEmail(e.target.value);
-          }}
-          type="text"
-          placeholder="Email"
-        />
-        <input
-          onChange={(e) => {
-            setPass(e.target.value);
-          }}
-          type="password"
-          placeholder="Pass"
-        />
-
-        <button
-          onClick={() => {
-            registrar();
-          }}
-        >
-          Registrar
-        </button>
-        {existe ? <p>{existe}</p> : ""}
-        <div>
-          <select name="select" onChange={(e) => setSelect(e.target.value)}>
-            {infoUsers
-              ? infoUsers.map((user, i) => {
-                  return <option key={i}>{user.email}</option>;
-                })
-              : ""}
-          </select>
-          <button
-            onClick={() => {
-              borrarUser();
-            }}
-          >
-            Borrar
-          </button>
-        </div>
-      </div>
+      <Register data={infoUsers} />
 
       {/*PINTA LOS USERS Y PASS */}
 
@@ -242,10 +103,9 @@ const App = () => {
                     <button
                       className="btn-users"
                       onClick={() => {
-                        setUserClick(i+1);
-                        console.log(i)
+                        setUserClick(i + 1);
+                        console.log(i);
                         setMessage(false);
-                    
                       }}
                       key={i}
                     >
@@ -259,12 +119,12 @@ const App = () => {
             <div id="input-pass">
               <input
                 type="password"
-                placeholder={`Pon tu Pass ${infoUsers[userClick-1].userName}`}
+                placeholder={`Pon tu Pass ${infoUsers[userClick - 1].userName}`}
                 onChange={(e) => setPass(e.target.value)}
               />
               <br></br>
               <button onClick={() => login()}>Loguear</button>
-              {message ? <p>Incorrecto</p> : ""}
+              {message ? <p>{message}</p> : ""}
             </div>
           ) : (
             ""
@@ -296,16 +156,11 @@ const App = () => {
                         placeholder="Modificar Nombre Tarea"
                         onChange={(e) => setNombreTarea(e.target.value)}
                       ></input>
-                      <button
-                        id={tarea._id}
-                        onClick={(e) => actualizar(e.target.id)}
-                      >
+                      <button id={tarea._id} onClick={(e) => actualizar(e.target.id)}>
                         Actualizar
                       </button>
                     </div>
-                    <button onClick={() => borrar(tarea.nombreTarea)}>
-                      Borrar Tarea
-                    </button>
+                    <button onClick={() => borrar(tarea.nombreTarea)}>Borrar Tarea</button>
                     <button onClick={() => cambiar(i)}>Cambiar</button>
                   </div>
                 </div>
