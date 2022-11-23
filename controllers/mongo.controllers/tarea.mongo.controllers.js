@@ -6,7 +6,6 @@ const Tareas = {
     res.json(infoTareas);
   },
   insertTarea: async (req, res) => {
-    console.log(req.body);
     const { idUsuario, nombreTarea } = req.body;
     let info = { idUsuario, nombreTarea };
     const insertTareas = await tareaModel.create(info);

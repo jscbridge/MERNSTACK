@@ -24,7 +24,7 @@ const Register = (props) => {
     let okUserName = new RegExp("[a-zA-ZÀ-ÖØ-öø-ÿ]+.?(( |-)[a-zA-ZÀ-ÖØ-öø-ÿ]+.?)*").test(name);
     let okEmail = new RegExp("^[a-zA-Z0-9.!_`{|}~-ñ]+@[a-zA-Z0-9-]+(?:.[a-zA-Z0-9-]+)*$").test(email);
     let okPass = new RegExp("^([0-9])*$").test(pass);
-
+    
     if (okEmail && okPass && okUserName) {
       metaInfo("POST", { userName: name, email, pass }, "/insertuser");
     } else {
@@ -52,7 +52,7 @@ const Register = (props) => {
       .then((res) => res.json(res))
       .then((res) => {
         if (endpoint == "/insertuser") {
-          if (res == "existe") {
+          if (res.msn == "existe") {
             setExiste("Ya existe ese correo");
           } else {
             setExiste(false);
