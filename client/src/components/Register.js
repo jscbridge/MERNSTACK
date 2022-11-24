@@ -14,7 +14,7 @@ const Register = (props) => {
   const [infoUsers, setUsers] = useState("");
   //Para que se cargue cuando lo cargue el padre
   setTimeout(() => {
-    if (infoUsers == "") {
+    if (infoUsers === "") {
       setUsers(props.data);
     }
   });
@@ -51,8 +51,8 @@ const Register = (props) => {
     fetch(endpoint, datos)
       .then((res) => res.json(res))
       .then((res) => {
-        if (endpoint == "/insertuser") {
-          if (res.msn == "existe") {
+        if (endpoint === "/insertuser") {
+          if (res.msn === "existe") {
             setExiste("Ya existe ese correo");
           } else {
             setExiste(false);

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Register from "./Register";
 
 const Insert = (props) => {
-  //Valores de los usuarios del mysql
+  // Valores de los usuarios del mysql
   const [infoUsers, setInfoUsers] = useState("");
 
   // Vista hidden/visible usuarios
@@ -34,7 +34,7 @@ const Insert = (props) => {
 
   //! Cuando se loguea al poner el pass.
   const login = () => {
-    if (pass == infoUsers[userClick - 1].pass) {
+    if (pass === infoUsers[userClick - 1].pass) {
       let idUsuario = infoUsers[userClick - 1].idUser;
       metaInfo("POST", { idUsuario }, "/getareas");
     } else {
@@ -42,17 +42,21 @@ const Insert = (props) => {
     }
   };
 
+  // ! Insertar tarea
   const insertar = () => {
     let idUsuario = infoUsers[userClick - 1].idUser;
     metaInfo("POST", { idUsuario, nombreTarea }, "/inserttarea");
   };
+  // ! Actualizar Tarea
   const actualizar = (id) => {
     metaInfo("PUT", { id, nombreTarea }, "/updatetareas");
   };
+  // ! Borrar Tarea
   const borrar = (nombreTarea) => {
     metaInfo("DELETE", { nombreTarea }, "/deletetarea");
   };
 
+  //! Funcion dinámica [method, datos, fetch]
   const metaInfo = (method, info, endpoint) => {
     let datos = {
       method: method,
@@ -67,7 +71,7 @@ const Insert = (props) => {
     fetch(endpoint, datos)
       .then((res) => res.json(res))
       .then((res) => {
-        if (endpoint == "/getareas") {
+        if (endpoint === "/getareas") {
           setTareas(res);
           setViewUsers(false);
         } else {
@@ -76,35 +80,32 @@ const Insert = (props) => {
       });
   };
 
+  // Para ocultar todos los inputs del update y hacer visible el clickeado
   const cambiar = (posicionTarea) => {
     let tasks = document.getElementsByClassName("updateTarea");
     for (let i = 0; i < tasks.length; i++) {
       document.getElementsByClassName("updateTarea")[i].style.display = "none";
     }
-    let task = (document.getElementsByClassName("updateTarea")[posicionTarea].style.display =
-      "flex");
+    document.getElementsByClassName("updateTarea")[posicionTarea].style.display = "flex";
   };
 
   return (
     <div id="App">
-        
-     {/*COMPONENTE REGISTER*/}
-
+      {/*COMPONENTE REGISTER*/}
       <Register data={infoUsers} />
-
-      {/*PINTA LOS USERS Y PASS */}
-
+      {/* PINTA LOS USERS Y PASS */}
       {viewUsers ? (
         <div>
           <div id="users">
+            {/* Mapea todos los users de mysql */}
             {infoUsers
               ? infoUsers.map((user, i) => {
                   return (
+                    // Selecciona la posición y asi se le busca en el stado infoUsers
                     <button
                       className="btn-users"
                       onClick={() => {
                         setUserClick(i + 1);
-                        console.log(i);
                         setMessage(false);
                       }}
                       key={i}
@@ -115,6 +116,7 @@ const Insert = (props) => {
                 })
               : ""}
           </div>{" "}
+          {/* Aparece el Input PASS al hacer CLICK */}
           {userClick ? (
             <div id="input-pass">
               <input
@@ -140,6 +142,8 @@ const Insert = (props) => {
           Cerrar sesión
         </button>
       )}
+
+      {/* AL LOGUEAR SE CREA LAS TAREAS */}
 
       {tareas ? (
         <div id="tareas">
@@ -168,13 +172,10 @@ const Insert = (props) => {
             })}
           </div>
           <br></br>
+          
           <div id="isertarTarea">
             <p>INSERTAR TAREA</p>
-            <input
-              type="text"
-              placeholder="Nombre Tarea"
-              onChange={(e) => setNombreTarea(e.target.value)}
-            />
+            <input type="text" placeholder="Nombre Tarea" onChange={(e) => setNombreTarea(e.target.value)} />
             <button onClick={() => insertar()}>INSERTAR</button>
           </div>
         </div>

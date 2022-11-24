@@ -11,8 +11,6 @@ body {
 #users {
   display        : flex;
   justify-content: center;
-
-
 }
 
 .btn-users {
@@ -29,8 +27,8 @@ body {
 
 #input-pass input {
   font-size: 3vh;
-  width: 100%;
-  width: -webkit-fill-available;  
+  width    : 100%;
+  width    : -webkit-fill-available;
 }
 
 #input-pass button {
@@ -45,7 +43,6 @@ button:hover {
   color           : white;
   background-color: rgb(45, 56, 72);
 }
-
 
 #tareas {
   width           : 50vh;
