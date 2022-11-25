@@ -1,4 +1,5 @@
 const Sequelize = require("sequelize");
+
 const sequelize = new Sequelize("MERN", "root", "root", {
   host: "localhost",
   dialect: "mysql",
@@ -6,12 +7,13 @@ const sequelize = new Sequelize("MERN", "root", "root", {
   define: {
     timestamps: false,
   },
+  logging: false,
 });
 
 sequelize
   .authenticate()
   .then(() => {
-    console.log("DataBase Mysql: ON");
+    console.log("DataBase MySql: ON");
   })
   .catch((err) => {
     console.log("DataBase Mysql: OFF");

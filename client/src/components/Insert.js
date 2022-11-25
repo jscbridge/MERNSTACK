@@ -11,16 +11,16 @@ const Insert = (props) => {
   // Detecta el id del user al clickear, recoge su id
   const [userClick, setUserClick] = useState("");
 
-  // Incorrecto pass
+  // Vista hidden/visible Mensaje Incorrecto pass
   const [message, setMessage] = useState(false);
 
-  // Valores recogidos de mongo
+  // Tareas de usuario concreto [Mongo]
   const [tareas, setTareas] = useState("");
 
-  // Multiuso para campo insertar/updatear
+  // [Multiuso] Campo insertar/updatear
   const [nombreTarea, setNombreTarea] = useState("");
 
-  // Estado del los valor del login [pass]
+  // Valor del pass login 
   const [pass, setPass] = useState("");
 
   // Carga la pg con los datos de los users [infoUsers]
@@ -32,6 +32,9 @@ const Insert = (props) => {
       });
   }, []);
 
+
+
+  
   //! Cuando se loguea al poner el pass.
   const login = () => {
     if (pass === infoUsers[userClick - 1].pass) {
@@ -116,6 +119,7 @@ const Insert = (props) => {
                 })
               : ""}
           </div>{" "}
+
           {/* Aparece el Input PASS al hacer CLICK */}
           {userClick ? (
             <div id="input-pass">
@@ -149,6 +153,9 @@ const Insert = (props) => {
         <div id="tareas">
           <h3>{infoUsers[userClick - 1].userName}</h3>
           <div id="cont-tarea">
+
+            {/* Itera todas las Tareas */}
+
             {tareas.map((tarea, i) => {
               return (
                 <div key={i}>

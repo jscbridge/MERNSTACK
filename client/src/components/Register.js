@@ -24,7 +24,8 @@ const Register = (props) => {
     let okUserName = new RegExp("[a-zA-ZÀ-ÖØ-öø-ÿ]+.?(( |-)[a-zA-ZÀ-ÖØ-öø-ÿ]+.?)*").test(name);
     let okEmail = new RegExp("^[a-zA-Z0-9.!_`{|}~-ñ]+@[a-zA-Z0-9-]+(?:.[a-zA-Z0-9-]+)*$").test(email);
     let okPass = new RegExp("^([0-9])*$").test(pass);
-    
+
+    // CORRECTO
     if (okEmail && okPass && okUserName) {
       metaInfo("POST", { userName: name, email, pass }, "/insertuser");
     } else {
@@ -42,10 +43,7 @@ const Register = (props) => {
       method: method,
       body: JSON.stringify(info),
       mode: "cors",
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Content-type": "application/json",
-      },
+      headers: { "Access-Control-Allow-Origin": "*", "Content-type": "application/json" },
     };
 
     fetch(endpoint, datos)
@@ -97,6 +95,7 @@ const Register = (props) => {
       {existe ? <p>{existe}</p> : ""}
       <div>
         <select name="select" onChange={(e) => setSelectEmail(e.target.value)}>
+          {" "}
           {infoUsers
             ? infoUsers.map((user, i) => {
                 return <option key={i}>{user.email}</option>;
@@ -108,6 +107,7 @@ const Register = (props) => {
             borrarUser();
           }}
         >
+          {" "}
           Borrar
         </button>
       </div>
