@@ -24,10 +24,12 @@ const Insert = (props) => {
   const [pass, setPass] = useState("");
 
   // Carga la pg con los datos de los users [infoUsers]
+
   useEffect(() => {
     fetch("/getusers")
-      .then((res) => res.json(res))
+      .then((res) => res.json())
       .then((res) => {
+        console.log(res)
         setInfoUsers(res);
       });
   }, []);
